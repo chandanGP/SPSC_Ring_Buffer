@@ -45,11 +45,13 @@ class SPSC_Ring_Buffer :
         return True
     
     def get_with_wait(
-        this
+        this,
+        timeout : float | None = None
     ) :
         while this.__tail_idx == this.__head_idx :
             this.__get_event.clear()
-            this.__get_event.wait()
+            if not this.__get_event.wait(timeout) :
+                return 
         
         if this.__tail_idx < this.__last_idx :
             next_tail_idx = this.__tail_idx + 1
