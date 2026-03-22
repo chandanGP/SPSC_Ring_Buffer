@@ -6,7 +6,8 @@ class SPSC_Ring_Buffer :
     def __init__(
         this,
         buffer_size : int,
-        enable_get_wait : bool = True
+        enable_get_wait : bool = True,
+        replace_with_none : bool = False
     ) :
         this.__buffer_size = buffer_size
         this.__buffer = [
@@ -20,9 +21,11 @@ class SPSC_Ring_Buffer :
         this.__get_event = threading.Event()
         
         if enable_get_wait :
-            this.get = this.__get_with_wait__
+            this.get = this.get_with_wait
         else :
-            this.get = this.__get_without_wait__
+            this.get = this.get_without_wait
+        
+        this.__replace_with_none = replace_with_none
     
     def put(
         this,
@@ -41,7 +44,7 @@ class SPSC_Ring_Buffer :
         this.__get_event.set()
         return True
     
-    def __get_with_wait__(
+    def get_with_wait(
         this
     ) :
         while this.__tail_idx == this.__head_idx :
@@ -54,10 +57,12 @@ class SPSC_Ring_Buffer :
             next_tail_idx = 0
         
         x = this.__buffer[this.__tail_idx]
+        if this.__replace_with_none :
+            this.__buffer[this.__tail_idx] = None
         this.__tail_idx = next_tail_idx
         return x
     
-    def __get_without_wait__(
+    def get_without_wait(
         this
     ) :
         if this.__tail_idx == this.__head_idx :
@@ -69,6 +74,8 @@ class SPSC_Ring_Buffer :
             next_tail_idx = 0
         
         x = this.__buffer[this.__tail_idx]
+        if this.__replace_with_none :
+            this.__buffer[this.__tail_idx] = None
         this.__tail_idx = next_tail_idx
         return x
         
