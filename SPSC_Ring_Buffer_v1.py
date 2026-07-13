@@ -1,6 +1,10 @@
 """
-Version 2.0
+Veriosn 1.0
+* This is the first version of SPSC ring buffer I created, which is fast and good but 
+  I observed a very rare bug when both producer and consumer threads exchanging data 
+  at very high speed , that bug is resolved in second version.
 """
+
 import threading
 
 
