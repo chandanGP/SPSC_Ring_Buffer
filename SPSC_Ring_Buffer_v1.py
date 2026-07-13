@@ -9,6 +9,9 @@ import threading
 
 
 class SPSC_Ring_Buffer :
+    """
+    Veriosn 1.0
+    """
     
     def __init__(
         this,
